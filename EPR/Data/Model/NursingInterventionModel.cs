@@ -1,0 +1,132 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace App.Data.Model
+{
+    public class NursingInterventionModel
+    {
+         public string QUESPAAdmDR {set;get;}
+         public string Q01Time {set;get;}
+         public string Q02Time {set;get;}
+         public string Q03Time {set;get;}
+         public string Q04Time {set;get;}
+         public string Q05Time {set;get;}
+         public string Q06Time {set;get;}
+         public string Q07Time {set;get;}
+         public string Q08Time {set;get;}
+         public string Q09Time {set;get;}
+         public string Q10Time {set;get;}
+         public string Q11Dep {set;get;}
+         public string Q12Dep {set;get;}
+         public string Q13Dep {set;get;}
+         public string Q14Dep {set;get;}
+         public string Q15Dep {set;get;}
+         public string Q16Dep {set;get;}
+         public string Q17Dep {set;get;}
+         public string Q18Dep {set;get;}
+         public string Q19Dep {set;get;}
+         public string Q20Dep {set;get;}
+         public string Q21BT {set;get;}
+         public string Q22BT {set;get;}
+         public string Q23BT {set;get;}
+         public string Q24BT {set;get;}
+         public string Q25BT {set;get;}
+         public string Q26BT {set;get;}
+         public string Q27BT {set;get;}
+         public string Q28BT {set;get;}
+         public string Q29BT {set;get;}
+         public string Q30BT {set;get;}
+         public string Q31PR {set;get;}
+         public string Q32PR {set;get;}
+         public string Q33PR {set;get;}
+         public string Q34PR {set;get;}
+         public string Q35PR {set;get;}
+         public string Q36PR {set;get;}
+         public string Q37PR {set;get;}
+         public string Q38PR {set;get;}
+         public string Q39PR {set;get;}
+         public string Q40PR {set;get;}
+         public string Q41RR {set;get;}
+         public string Q42RR {set;get;}
+         public string Q43RR {set;get;}
+         public string Q44RR {set;get;}
+         public string Q45RR {set;get;}
+         public string Q46RR {set;get;}
+         public string Q47RR {set;get;}
+         public string Q48RR {set;get;}
+         public string Q49RR {set;get;}
+         public string Q50RR {set;get;}
+         public string Q51BP1 {set;get;}
+         public string Q52BP1 {set;get;}
+         public string Q53BP1 {set;get;}
+         public string Q54BP1 {set;get;}
+         public string Q55BP1 {set;get;}
+         public string Q56BP1 {set;get;}
+         public string Q57BP1 {set;get;}
+         public string Q58BP1 {set;get;}
+         public string Q59BP1 {set;get;}
+         public string Q60BP1 {set;get;}
+         public string Q61BP2 {set;get;}
+         public string Q62BP2 {set;get;}
+         public string Q63BP2 {set;get;}
+         public string Q64BP2 {set;get;}
+         public string Q65BP2 {set;get;}
+         public string Q66BP2 {set;get;}
+         public string Q67BP2 {set;get;}
+         public string Q68BP2 {set;get;}
+         public string Q69BP2 {set;get;}
+         public string Q70BP2 {set;get;}
+         public string Q71O2Sat {set;get;}
+         public string Q72O2Sat {set;get;}
+         public string Q73O2Sat {set;get;}
+         public string Q74O2Sat {set;get;}
+         public string Q75O2Sat {set;get;}
+         public string Q76O2Sat {set;get;}
+         public string Q77O2Sat {set;get;}
+         public string Q78O2Sat {set;get;}
+         public string Q79O2Sat {set;get;}
+         public string Q80O2Sat {set;get;}
+         public string Q81OrdItm {set;get;}
+         public string Q82OrdItm {set;get;}
+         public string Q83OrdItm {set;get;}
+         public string Q84OrdItm {set;get;}
+         public string Q85OrdItm {set;get;}
+         public string Q86OrdItm {set;get;}
+         public string Q87OrdItm {set;get;}
+         public string Q88OrdItm {set;get;}
+         public string Q89OrdItm {set;get;}
+         public string Q90OrdItm {set;get;}
+         public string Q91Outcome {set;get;}
+         public string Q92Outcome {set;get;}
+         public string Q93Outcome {set;get;}
+         public string Q94Outcome {set;get;}
+         public string Q95Outcome {set;get;}
+         public string Q96Outcome {set;get;}
+         public string Q97Outcome {set;get;}
+         public string Q98Outcome {set;get;}
+         public string Q99Outcome {set;get;}
+         public string Q100Outcome {set;get;}
+         public string Q101User {set;get;}
+         public string Q102User {set;get;}
+         public string Q103User {set;get;}
+         public string Q104User {set;get;}
+         public string Q105User {set;get;}
+         public string Q106User {set;get;}
+         public string Q107User {set;get;}
+         public string Q108User {set;get;}
+         public string Q109User {set;get;}
+         public string Q110User {set;get;}
+         public string QmedOrdSet {set;get;}
+         public string Qmed2OrdSet {set;get;}
+         public string Qmed3OrdSet {set;get;}
+         public string Qmed4OrdSet {set;get;}
+         public string Qmed5OrdSet {set;get;}
+         public string Qmed6OrdSet {set;get;}
+         public string Qmed7OrdSet {set;get;}
+         public string Qmed8OrdSet {set;get;}
+         public string Qmed9OrdSet {set;get;}
+         public string Qmed10OrdSet { set; get; }
+    }
+}

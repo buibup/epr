@@ -1,0 +1,27 @@
+﻿.wrapper {
+    overflow:hidden;
+    background: initial;
+    max-height: 600px;
+    height: 600px;
+    min-width:80px;
+    width:100%;
+    padding: 0px 0px 0px 0px;
+}
+
+.wrapper::-webkit-scrollbar{
+  width: 1px;
+  border-radius: 1px;
+}
+
+.wrapper::-webkit-scrollbar-track{
+  background: #CCEEF4;
+  border-radius: 1px;
+   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+::-webkit-scrollbar-thumb{
+  width: 1px;
+  background: #49AEC0;
+  border: 1px solid #CCEEF4;
+  border-radius: 1px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}

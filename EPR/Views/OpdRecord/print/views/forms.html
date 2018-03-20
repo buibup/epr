@@ -1,0 +1,29 @@
+<div  ng-controller="formList" >
+
+  <select ng-model="selectedform" ng-options="form.formname for form in forms">
+    <option value="">-- choose form --</option>
+  </select>
+  <input type="text" ng-bind="selectedform" value="{{selectedform.ref}}">
+  <table width="100%" style="position:static;"><tr>
+  <td width="50%">
+    &nbsp;
+  </td>
+  <td>
+
+    <page size="A4" style="position:relative;" ng-repeat="page in selectedform.page" pageNo="{{page.pageno}}">
+
+      <div style="position:relative;left:0px;top:0px">
+        <img src="images/{{page.img}}" alt="" size="A4" style="z-index:0" />
+      </div>
+
+      <div style="{{page.position.dtemplate.style}}" id="dDMG" ng-bind-html="selectedform.template" >
+
+      </div>
+
+    </page>
+
+
+  </td>
+</tr></table>
+</div>
+

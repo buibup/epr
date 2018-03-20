@@ -1,0 +1,139 @@
+﻿@{
+    if (Session["MenuBoxId"] == null){
+        Session["MenuBoxId"] = "";
+    }
+}
+<!DOCTYPE html>
+<html ng-app="MainModule" lang="th">
+<head>
+	<meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<link rel="shortcut icon" href="@Url.Content("~/Assets/img/favicon.ico")" type="image/x-icon">
+	<link rel="icon" href="@Url.Content("~/Assets/img/favicon.ico")" type="image/x-icon">
+	<link rel="icon" href="@Url.Content("~/Assets/img/favicon.png")" type="image/png">
+
+	<!-- Basic Styles -->
+	<link rel="stylesheet" type="text/css"  href="@Url.Content("~/Assets/css/bootstrap.min.css")">
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/customScorllbar.css")">
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Assets/css/dropdowns-enhancement.css")">
+	<link rel="stylesheet" type="text/css"  href="@Url.Content("~/Assets/css/font-awesome.min.css")")">
+	<link rel="stylesheet" type="text/css"  href="@Url.Content("~/Assets/css/smartadmin-production.css")">
+	<link rel="stylesheet" type="text/css"  href="@Url.Content("~/Assets/css/smartadmin-skins.css")">
+	<link rel="stylesheet" type="text/css"  href="@Url.Content("~/Assets/css/ustyle.css")">
+	<link rel="stylesheet" type="text/css"  media="print" href="@Url.Content("~/Assets/css/print.css")">
+
+    <script>
+        var ROOT_URL = '@Request.Url.GetLeftPart(UriPartial.Authority)@Url.Content("~/")';
+    </script>    
+
+    @RenderSection("HeaderTAG", false)
+</head>
+<body ng-controller="@ViewBag.AngularControllerName" class="smart-style-3">
+
+	<!-- HEADER -->
+	<header id="header">
+		<div id="logo-group">
+			<span id="logo"> <img src="@Url.Content("~/Assets/img/logo2.png")" alt="Dashboard." /> </span>
+		</div>
+
+		<div class="pull-right">
+			@*<div id="logout" class="btn-header transparent pull-right">
+				<span> <a href="@Url.Action("Logout", "Authentication")" title="Sign Out"><i class="fa fa-sign-out"></i></a> </span>
+			</div>
+			<div id="Div1" class="btn-header transparent pull-right">
+				<span> <a href="@Url.Action("Logout", "Authentication")" title="" class="user">Logout</a> </span>
+			</div>*@
+		</div>
+	</header>
+	<!-- END HEADER -->
+
+
+
+	<!-- Left panel : Navigation area -->
+	<aside id="left-panel" >
+
+		<!-- Home link -->
+		<div class="login-info homelink">
+			<span>
+				<a href="javascript:void(0);" title="Dashboard"><i class="fa fa-lg fa-fw fa-windows"></i> <span class="menu-item-parent">Episodes by Patient</span></a>					
+			</span>
+		</div>
+		<!-- end Home link -->
+
+		<!-- NAVIGATION : This navigation is also responsive -->
+		<nav id="MainNavigator" class="Navigator" >	 
+            @RenderSection("MenuTAG", false)
+		</nav>
+         
+		<!-- span class="minifyme"> <i class="fa fa-arrow-circle-left hit"></i> </span -->
+
+	</aside>
+	<!-- END NAVIGATION -->
+
+    
+
+	<!-- MAIN PANEL -->
+	<div id="main" role="main">
+		<!-- RIBBON -->
+		<div id="ribbon">
+            @RenderSection("ContentHaderTAG", true)
+		</div>
+		<!-- END RIBBON -->
+
+		<!-- MAIN CONTENT -->
+		<div id="content">                    
+            @RenderBody()
+		</div>
+		<!-- END MAIN CONTENT -->
+
+	</div>
+	<!-- END MAIN PANEL -->
+        
+
+	<!--================================================== -->
+	<script src="@Url.Content("~/Assets/js/libs/jquery-2.0.2.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/libs/jquery-ui-1.10.3.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/libs/angular.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/bootstrap/bootstrap.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/notification/SmartNotification.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/smartwidgets/jarvis.widget.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/plugin/sparkline/jquery.sparkline.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/plugin/jquery-validate/jquery.validate.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/plugin/masked-input/jquery.maskedinput.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/plugin/select2/select2.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/plugin/bootstrap-slider/bootstrap-slider.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/plugin/msie-fix/jquery.mb.browser.min.js")"></script>
+	<script src="@Url.Content("~/Assets/js/plugin/fastclick/fastclick.js")"></script>
+    <script src="@Url.Content("~/Assets/js/bootstrap/dropdowns-enhancement.js")"></script>
+	<!-- MAIN APP JS FILE -->
+	<script src="@Url.Content("~/Assets/js/app.js")"></script>		
+
+	<script type="text/javascript">
+	    // DO NOT REMOVE : GLOBAL FUNCTIONS!
+	    $(document).ready(function () {
+	        pageSetUp();
+	    });   
+    </script>	     
+    @RenderSection("FooterTAG", false)
+
+
+    
+	<script type="text/javascript">
+	    // DO NOT REMOVE : GLOBAL FUNCTIONS!
+	    $(document).ready(function () {
+	        $('#mainMenuSelect').change(swapMainMenu);
+	    });
+
+	    function swapMainMenu() {
+	        //send to controller for remember last selected menu, in session
+	        var postUrl = $(this).attr('url');
+	        var MenuBoxId = $(this).val();
+	        window.location.href = postUrl + "?menuid=" + MenuBoxId;
+	    }
+
+    </script>
+</body>
+
+</html>

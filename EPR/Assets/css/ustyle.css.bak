@@ -1,0 +1,314 @@
+.smart-style-3 #logo img {
+	width: 160px;
+}
+.c,.c td,.c th{text-align: center;}
+.l{text-align: left !important;}
+.r{text-align: right !important;}
+.B{font-weight:bold ;text-align: left;}
+.lF{text-align: left !important;font-weight:bold !important;}
+.rF{text-align: right !important;font-weight:bold !important;}
+.lFW{text-align: right !important;font-weight:bold !important;width:200px !important; }
+.lW{text-align: left !important;width:210px !important; }
+
+
+
+.pointer, table.pointer tr td
+{
+    cursor:pointer;
+}
+tr.active td,tr.active th
+{
+    background-color: #FFFF89 !important;
+}
+
+ input.readonly,
+ .smart-form .input input.readonly, 
+ .smart-form .select select.readonly,
+ .smart-form .textarea textarea.readonly
+ {
+     background-color: #fffaae;
+     /*cursor: not-allowed;*/
+ }
+ .modal-footer {
+    margin-top: 0;
+}
+
+ .homelink a
+ {
+     padding-top: 4px;
+ }
+ 
+ h1.title {
+    letter-spacing: normal;
+    font-size: 20px;
+    margin: 0;
+    padding: 9px 0 0 0;
+    display:inline-block;
+    color: #666;
+}
+ h1.title i {
+    font-size: 22px;
+    vertical-align: 0%;
+    width:1em;
+}
+
+.btn-header>:first-child>a.user 
+{
+    border: 0px solid #ccc;
+    font-size: 14px;
+    padding: 5px 15px 0 15px;
+    display:inline-block;
+    width: auto;
+}
+
+.searhBox
+{
+    margin: 0 0 30px 0;   
+}
+.searhBox .col
+{
+    padding-left: 0px;
+}
+.searhBox .colInput
+{
+    padding-left: 0px;
+    padding-bottom: 10px;
+}
+.searchInfoBox
+{
+    padding: 5px 0;
+}
+
+.colInput
+{
+    padding-bottom: 10px;
+}
+
+.ui-datepicker
+{
+    z-index: 99999 !important;
+}
+.jarviswidget .widget-body
+{
+    min-height: 30px !important;
+}
+
+.modalLoadingPanel
+{
+    height: 150px; text-align:center; margin-top: 50px; color: #c6c6c6;
+}
+
+
+.pagination>li>button, .pagination>li>span {
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+    -moz-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+    -webkit-box-shadow: inset 0 -2px 0 rgba(0,0,0,.05);
+}
+
+.pagination>li>button, .pagination>li>span {
+    position: relative;
+    float: left;
+    padding: 6px 12px;
+    line-height: 1.428571429;
+    text-decoration: none;
+    color: #3276b1;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-left: -1px;
+}
+.pagination>.disabled>span, .pagination>.disabled>span:hover, .pagination>.disabled>span:focus, .pagination>.disabled>button, .pagination>.disabled>button:hover, .pagination>.disabled>button:focus {
+    color: #999;
+    background-color: #fff;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+.pagination>.active>button, .pagination>.active>span, .pagination>.active>button:hover, .pagination>.active>span:hover, .pagination>.active>button:focus, .pagination>.active>span:focus {
+    z-index: 2;
+    color: #fff;
+    background-color: #3276b1;
+    border-color: #3276b1;
+    cursor: default;
+}
+label .require {
+    color:Red !important;
+}
+
+.sel{display:inline-block;margin-bottom:0;font-weight:normal;text-align:center;vertical-align:middle;cursor:pointer;background-image:none;border:1px solid transparent;white-space:nowrap;padding:6px 12px;font-size:13px;line-height:1.428571429;border-radius:2px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+
+.BannerIMG
+{
+    width: 100%;
+    height:200px;
+}
+
+
+
+.bg-color-orange2 {
+background-color: #F7B305!important;
+}
+
+.delbtn, .delbtn:hover, .delbtn:active 
+{
+    top: 15px !important;
+    right:15px !important;
+    position:absolute !important;
+    opacity: 0.5;
+    width: 60px;
+    display:none;
+}
+
+.CounterMainMenu
+{
+    position:absolute;
+    bottom:0;
+    left: 250px;
+    height:35px;
+    line-height: 35px;
+}
+.CounterMainMenu a
+{
+    opacity: 0.6;
+    line-height: 28px;
+    height:35px;
+    font-weight:bold;
+    margin: 5px;
+    padding: 0 10px;
+    display:inline-block;
+    border: 1px solid #ccc;
+    border-bottom: 0px solid #ccc;
+    background-color:#FFF;
+    color: #333;
+    border-top-left-radius: 10px 5px;
+    border-top-right-radius: 10px 5px;
+}
+.CounterMainMenu a:hover, .CounterMainMenu a.active
+{
+    text-decoration:none;
+    opacity: 1;
+}
+
+.checkboxA
+{
+    margin-right: 20px;
+    cursor:pointer;
+}
+
+.cursor
+{
+    cursor:pointer !important;
+}
+.menuTable{
+	border-bottom: 1px solid #ddd;
+	display: block; 
+	width:100%;
+	font-size: 12px;
+}
+.menuTable tr th, .menuTable tr td{
+	padding: 4px 5px !important;
+}
+.menuTable tr td{
+	cursor:pointer;
+}
+.menuTable tr.opended:hover td{
+    background-color: #FFE39B !important;
+}
+.menuTable tr:hover td{
+    background-color: #E1FFDF !important;
+}
+
+.menuFilter{
+	text-align:center;
+}
+.menuFilter .input{
+	width: 96px; 
+	font-size:11px; 
+	margin-right:4px; 
+	display:inline-block;
+}
+.menuFilter .input:last-child{
+	margin-right:0px;
+}
+.menuFilter .input input{
+	height: 20px;
+	padding: 3px;
+	font-size: 12px;
+	padding-right: 22px !important;
+}
+.menuFilter  .icon-append{
+	top: 0px !important;
+	width: 12px !important;
+	height: 20px !important;
+	font-size: 14px !important;
+	line-height: 20px !important;
+	cursor:pointer;
+}
+
+
+
+.headerCon
+{
+    margin-bottom:2px;
+    margin-top: 35px;
+	font-weight:bold;
+}
+
+
+.headerConLocation
+{
+    margin-bottom:2px;
+    margin-top: 35px;
+	font-weight:bold;
+	color:blue;
+}
+
+
+.headerConDR
+{
+    margin-bottom:2px;
+    margin-top: 35px;
+	font-weight:bold;
+	color:blueviolet;
+}
+
+.nav-tabs>li {
+    border-right: 1px solid #ccc;
+}
+.nav-tabs>li.active>a{
+    border: 1px solid transparent !important;
+    margin-right: 0px !important;
+}
+
+.mw950{
+    max-width: 950px;
+}
+
+.table-bordered>thead>tr>th
+{
+    background: url('../img/row_bg.gif') 0 50% repeat-x !important;
+}
+.highlighted {
+	background-color: #E4E6F5 !important;
+ }
+ 
+
+ tr.opended td
+ {
+	background-color: #FFE39B !important; 
+	font-weight:bold;
+	color:blueviolet;
+}
+ 
+.marked {
+	color: red !important;
+}
+.unmarked {
+	color: black !important;
+}
+    
+@media print{
+	#main{margin-left:10px !important; left:0px !important;}
+	.ribbon-button-alignment{display:none !important;}
+	table{border: 0px !important;}
+	*{font-size: 8pt !important;}
+	aside{display:none !important;}
+}	

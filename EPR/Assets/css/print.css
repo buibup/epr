@@ -1,0 +1,10 @@
+	#main{margin-left:10px !important; left:0px !important;}
+	#main *{border:none !important; }
+	.ribbon-button-alignment{display:none !important;}
+	table{border: none !important;}
+	*{font-size: 8pt !important;overflow:hidden;}
+	aside, .button-icon, .fa, .hidden-print{display:none !important;}
+	[role="heading"]{display:none !important;}
+	.table-bordered,.table-bordered td{border:none !important;}
+	.table-responsive{overflow:hidden !important;border:none !important;}
+    [role="content"]{border:none !important;}

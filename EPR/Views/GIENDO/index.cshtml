@@ -1,0 +1,378 @@
+﻿@{
+    ViewBag.AngularControllerName = "GIENDOController";
+
+
+    ViewBag.Title = "GIENDO VIEW";
+    Layout = "~/Views/Shared/TemplateGIENDO.cshtml";
+}
+
+@section HeaderTAG{
+}
+<h1 class="title">
+    <i class="fa fa-lg fa-fw fa-medkit"></i><span>GIENDO VIEW</span>
+</h1>
+@section MenuTAG{
+<table class="table table-striped menuTable">
+    <tbody style="height:600px;/* Just for the demo          */ width:220px;    overflow-y: auto;/* Trigger vertical scroll    */    overflow-x: hidden;/* Hide the horizontal scroll */    display:-webkit-box;">
+            <tr ng-repeat="GiList in GIENDO.model"  id="Giendo{{$index}}"  tabindex="{{$index}}" ng-keydown="keydown($event,$index)" ng-class="{'active':GiList.active}">
+                <td>
+                    <table class="B"  ng-click="loadGiendoMedical(GiList,GiList.RowID);activeLastOpenedRow($index);" ng-class="{'opended':$index === LastOpenedRow}" id="GiList{{$index}}" style="width:100%">
+                        <tr>
+                            <td style="padding:0px 0px 0px 0px;background-color:#fa3917 !important;">{{GiList.EN_DATE|ConvertDate }} {{GiList.EN_TIME}}</td>
+                        </tr>
+                        <tr>
+                            <td style="background-color:#ff8a56 !important">
+                                {{GiList.HEAD  | cut:true:27:'...'}}&nbsp;&nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0px 0px 0px 10px;">
+                                {{GiList.DIAGNOSIS}}
+                            </td>
+                        </tr>
+                    </table>
+                </td>   
+               </tr>
+                <tr ng-hide="GIENDO.model.length >0" >
+                    <td width="100%">No data</td>
+                </tr>      
+         
+       </tbody>
+</table>
+    
+}
+
+<span class="ribbon-button-alignment pull-right hidden-print">
+    <lable>HN:</lable><input ng-model="hn" ng-init="hn='@(ViewBag.RN)'" ng-keypress="($event.which === 13)?SeachPatient():0" type="text" style="width: 85px; font-size:11px; margin-right:4px; text-align:center;" />
+</span>
+@*<div class="row">
+    <div  class="col-sm-12">
+        <div class="jarviswidget" id="wid-id-7" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false" role="widget" style="">
+            <header role="heading">
+                <div class="jarviswidget-ctrls" rol="menu">
+                    <a ng-click="closeAllGI()" href="javascript:void(0);" class="button-icon jarviswidget-delete-btn" title="Close all."><i class="fa fa-times"></i></a>
+                </div>
+                <ul class="nav nav-tabs pull-left in">
+
+                    <li ng-repeat="GiList in GIENDO.model" ng-class="{'active':GiList.active}">
+                        <a data-toggle="tab" href="#GiTab{{$index}}" ng-class="{'opended':GiList.index === LastOpenedRow}" ng-click="activeLastOpenedRow(GiList.Rowid)">
+                            <span class="hidden-mobile hidden-tablet" id="Gi-Active">
+                                {{GiList.HEAD}}
+                                &nbsp;&nbsp;&nbsp;
+                                <i ng-click="MarkGITabMedical(GiList)" class="fa fa-thumb-tack" ng-class="{'marked': GiList.marked, 'unmarked': !GiList.marked}"></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <i ng-click="closeGITabMedical(GiList)" class="fa fa-times" ng-class="{'fa-spin':!GI.loaded}"></i>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </header>
+        </div>
+    </div>
+</div>*@
+<div class="row">
+    <div ng-show="GITabList.length > 0" class="col-sm-12"   >
+       
+        <div class="jarviswidget" id="wid-id-7" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false" role="widget" style="">
+				<header role="heading">
+                    <div class="jarviswidget-ctrls" rol="menu">   
+                        <a ng-click="closeAllGITabList()" href="javascript:void(0);" class="button-icon jarviswidget-delete-btn" title="Close all."><i class="fa fa-times"></i></a>
+                    </div>
+					<ul class="nav nav-tabs pull-left in">
+            
+						<li ng-repeat="GITAB in GITabList" ng-class="{'active':GITAB.active}">
+							<a data-toggle="tab" href="#GITAB{{$index}}" ng-class="{'opended':GITAB.Rowid === LastOpenedRow}" ng-click="activeLastOpenedRow(GITAB.Rowid)"   > 
+                                <span class="hidden-mobile hidden-tablet"  id="EPI-Active"> 
+                                    {{GITAB.HEAD}} &nbsp;&nbsp;&nbsp;{{GITAB.EN_DATE|ConvertDate }} &nbsp;&nbsp;&nbsp;{{GITAB.EN_TIME}}                                 
+                                    &nbsp;&nbsp;&nbsp;
+                                    <i ng-click="MarkGITab(GITAB)" class="fa fa-thumb-tack" ng-class="{'marked': GITAB.marked, 'unmarked': !GITAB.marked}" ></i> 
+                                   &nbsp;&nbsp;&nbsp;
+                                    <i ng-click="closeGiendoTab(GITAB)" class="fa fa-times" ></i> 
+                                </span> 
+                            </a>
+						</li>
+					</ul>
+				    <span class="jarviswidget-loader"><i class="fa fa-refresh fa-spin"></i></span>
+                </header>
+            <div role="content">
+                <!-- widget content -->
+
+                <div class="widget-body">
+                    <div class="tab-content" style="min-height:200px;">
+
+                        <!-- TAB BOX -->
+                        <div ng-repeat="GITAB2 in GITabList" ng-class="{'active':GITAB2.active}" class="tab-pane" id="GITAB{{$index}}">
+                            <div >
+                                <div style="margin: 0 0 20px 0;" class="hidden-print">                                    
+                                    <span id="doctorList"  style="cursor:pointer; font-size: 13px;margin: 0px 5px 0px 5px;" class="label label-sm label-success">
+                                        {{GITAB2.ENDOSCOPIST}}
+                                    </span>
+                                </div>
+                                <div class="table-responsive mw870">
+                                    <table class="table table-bordered table-striped" id="PatientDetail">
+
+                                        <tbody>
+                                            <tr>
+                                                <td class="lF" id="PatientName">Patient Name: &nbsp;  {{GITAB2.PT_NAME}} </td>
+                                                <td class="lF" id="Gender">Gender: &nbsp; {{GITAB2.SEX}}</td>
+                                                <td class="lF" id="HN">HN: &nbsp;{{GITAB2.RN}} </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="dob">Date of Birth:&nbsp; {{}}</td>
+                                                <td class="lF" id="Age">Age:&nbsp; {{GITAB2.AGE}} Years </td>
+                                                <td class="lF" id="EPI">EN: &nbsp;- &nbsp;&nbsp;  Episode Date/Time: &nbsp;{{GITAB2.EN_DATE|ConvertDate}} {{GITAB2.EN_TIME}}</td>
+
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="table-responsive mw870">
+                                    <table class="table table-bordered table-striped" id="GIENDO_Detail">
+                                        <tbody>
+                                            <tr>
+                                                <td class="lF" id="ENDOSCOPIC_NO" width="200px">ENDOSCOPIC NO: &nbsp;</td>
+                                                <td class="lF" id="ENDOSCOPIC No_Detail">{{GITAB2.ENDOSCOPIC_NO}} </td>
+                                                <td rowspan="25" style="padding:0">
+                                                    <table ng-repeat="GITABImage in GITAB2.GiendPicList" class="table table-bordered table-striped" id="GIENDO_image">
+                                                        <tbody>
+                                                            <tr><td>{{GITABImage.Desc}}</td></tr>
+                                                            <tr>
+                                                                <td><img ng-src="data:image/jpeg;base64,{{GITABImage.PIC}}" style="height:70%;" id="photo-id" /></td>
+
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="ENDOSCOPIST">ENDOSCOPIST :</td>
+                                                <td class="lF" id="ENDOSCOPIST_Detail">{{GITAB2.ENDOSCOPIST}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="INSTRUMENT">INSTRUMENT:</td>
+                                                <td class="lF" id="INSTRUMENT_Detail">{{GITAB2.INSTRUMENT}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="ANESTHESIOLOGIST">ANESTHESIOLOGIST:</td>
+                                                <td class="lF" id="ANESTHESIOLOGIST_Detail">{{GITAB2.ANESTHESIOLOGIST}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="ANESTHESIA">TYPE OF ANESTHESIA:</td>
+                                                <td class="lF" id="ANESTHESIA_Detail">{{GITAB2.ANESTHESIA}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="PREMEDICATION">MEDICATION:</td>
+                                                <td class="lF" id="PREMEDICATION_Detail">{{GITAB2.PREMEDICATION}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="INDICATION">INDICATION:</td>
+                                                <td class="lF" id="INDICATION_Detail">{{GITAB2.INDICATION}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="CONSENT">CONSENT:</td>
+                                                <td class="lF" id="CONSENT_Detail">{{GITAB2.CONSENT}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="EN_PROCEDURE">PROCEDURE:</td>
+                                                <td class="lF" id="EN_PROCEDURE_Detail">{{GITAB2.EN_PROCEDURE}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="FINDING">FINDING:</td>
+                                                <td class="lF" id="FINDING_Detail"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="OROPHARYNX" ng-show="GITAB2.HEAD=='Colonoscopy'">Anal Canal:</td>
+                                                <td class="lF" id="OROPHARYNX" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">Oropharynx:</td>
+                                                <td class="lF" id="OROPHARYNX" ng-show="GITAB2.HEAD=='ERCP'">Duodenum:</td>
+                                                <td class="lF" id="OROPHARYNX_Detail">{{GITAB2.OROPHARYNX}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="ESOPHAGUS" ng-show="GITAB2.HEAD=='Colonoscopy'">Rectum:</td>
+                                                <td class="lF" id="ESOPHAGUS" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">Esophagus:</td>
+                                                <td class="lF" id="ESOPHAGUS" ng-show="GITAB2.HEAD=='ERCP'">Papilla:</td>
+                                                <td class="lF" id="ESOPHAGUS_Detail">{{GITAB2.ESOPHAGUS}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="EG_JUNCTION" ng-show="GITAB2.HEAD=='Colonoscopy'">Sigmoid Colon:</td>
+                                                <td class="lF" id="EG_JUNCTION" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">EG Junction:</td>
+                                                <td class="lF" id="EG_JUNCTION" ng-show="GITAB2.HEAD=='ERCP'">CBD:</td>
+                                                <td class="lF" id="EG_JUNCTION_Detail">{{GITAB2.EG_JUNCTION}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="FUNDUS" ng-show="GITAB2.HEAD=='Colonoscopy'">Descending Colon:</td>
+                                                <td class="lF" id="FUNDUS" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">Stomach Fundus:</td>
+                                                <td class="lF" id="FUNDUS" ng-show="GITAB2.HEAD=='ERCP'">CHD:</td>
+                                                <td class="lF" id="FUNDUS_Detail">{{GITAB2.FUNDUS}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="STOMACH_CARDIA" ng-show="GITAB2.HEAD=='Colonoscopy'">Splenic Fixure:</td>
+                                                <td class="lF" id="STOMACH_CARDIA" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">Cardia:</td>
+                                                <td class="lF" id="STOMACH_CARDIA" ng-show="GITAB2.HEAD=='ERCP'">IHD:</td>
+                                                <td class="lF" id="STOMACH_CARDIA_Detail">{{GITAB2.STOMACH_CARDIA}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="BODY" ng-show="GITAB2.HEAD=='Colonoscopy'">Transverse Colon:</td>
+                                                <td class="lF" id="BODY" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">Body:</td>
+                                                <td class="lF" id="BODY" ng-show="GITAB2.HEAD=='ERCP'">Cystic duct and gall bladder :</td>
+                                                <td class="lF" id="BODY_Detail">{{GITAB2.BODY}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="ANTRUM" ng-show="GITAB2.HEAD=='Colonoscopy'">Hepatic Flexure:</td>
+                                                <td class="lF" id="ANTRUM" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">Antrum:</td>
+                                                <td class="lF" id="ANTRUM" ng-show="GITAB2.HEAD=='ERCP'">Pancreatic duct:</td>
+                                                <td class="lF" id="ANTRUM_Detail">{{GITAB2.ANTRUM}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="PYLORUS" ng-show="GITAB2.HEAD=='Colonoscopy'">Ascending Colon:</td>
+                                                <td class="lF" id="PYLORUS" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">Pylorus:</td>
+                                                <td class="lF" id="PYLORUS" ng-show="GITAB2.HEAD=='ERCP'">Complication:</td>
+                                                <td class="lF" id="PYLORUS_Detail">{{GITAB2.PYLORUS}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="Cecum" ng-show="GITAB2.HEAD=='Colonoscopy'">Cecum:</td>
+                                                <td class="lF" id="Cecum" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">Duodenum Bulb:</td>
+                                                <td class="lF" id="Cecum" ng-show="GITAB2.HEAD=='ERCP'"></td>
+                                                <td class="lF" id="Cecum_Detail">{{GITAB2.DUODENUM_BULB}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="SEC_PART" ng-show="GITAB2.HEAD=='Colonoscopy'">Ileo-cecae Valve:</td>
+                                                <td class="lF" id="SEC_PART" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">2nd Part:</td>
+                                                <td class="lF" id="SEC_PART" ng-show="GITAB2.HEAD=='ERCP'"></td>
+                                                <td class="lF" id="SEC_PART_Detail">{{GITAB2.SEC_PART}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="OTHER" ng-show="GITAB2.HEAD=='Colonoscopy'">Terminal Ileum:</td>
+                                                <td class="lF" id="OTHER" ng-show="GITAB2.HEAD=='Esophago-Gastro-Duodenoscopy (EGD)'">3rd Part:</td>
+                                                <td class="lF" id="OTHER" ng-show="GITAB2.HEAD=='ERCP'"></td>
+                                                <td class="lF" id="OTHER_Detail">{{GITAB2.OTHER}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="Other">Other:</td>
+                                                <td class="lF" id="Other_Detail">{{GITAB2.OTHERS}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="Dianosis">Dianosis:</td>
+                                                <td class="lF" id="Dianosis_Detail">{{GITAB2.DIAGNOSIS}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="SITEOFBIOPSY">SITE OF BIOPSY:</td>
+                                                <td class="lF" id="SITEOFBIOPSY_Detail">{{GITAB2.BIOPSY}} AT {{GITAB2.SITE_OF_BIOPSY}}</td>
+                                            </tr>                                            
+                                            <tr>
+                                                <td class="lF" id="THERAPEUTIC_PROCEDURE">THERAPEUTIC PROCEDURE:</td>
+                                                <td class="lF" id="THERAPEUTIC_PROCEDURE_Detail">{{GITAB2.THERAPY}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="SUGGESTION">SUGGESTION:</td>
+                                                <td class="lF" id="SUGGESTION_Detail">{{GITAB2.RECOMMENDATION}}</td>
+                                            </tr>
+                                            @*<tr>
+                                                <td class="lF" id="ANESTHESIA">TYPE OF ANESTHESIA: &nbsp;  {{GITAB2.ANESTHESIA}} </td>
+                                                <td class="lF" id="ANESTHESIOLOGIST">ANESTHESIOLOGIST: &nbsp; {{GITAB2.ANESTHESIOLOGIST}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="ANTRUM">ANTRUM: &nbsp;{{GITAB2.ANTRUM}} </td>
+                                                <td class="lF" id="BIOPSY">BIOPSY: &nbsp;{{GITAB2.BIOPSY}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="BODY">BODY: &nbsp;{{GITAB2.BODY}} </td>
+                                                <td class="lF" id="CONSENT">CONSENT: &nbsp;{{GITAB2.CONSENT}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="DIAGNOSIS">DIAGNOSIS: &nbsp;{{GITAB2.DIAGNOSIS}} </td>
+                                                <td class="lF" id="DUODENUM_BULB">DUODENUM BULB: &nbsp;{{GITAB2.DUODENUM_BULB}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="EG_JUNCTION">EG JUNCTION: &nbsp;{{GITAB2.EG_JUNCTION}} </td>
+                                                <td class="lF" id="ENDOSCOPIC_NO">ENDOSCOPIC NO: &nbsp;{{GITAB2.ENDOSCOPIC_NO}} </td>
+                                            </tr>                                            
+                                            <tr>
+                                                <td class="lF" id="EN_PROCEDURE">EN PROCEDURE: &nbsp;{{GITAB2.EN_PROCEDURE}} </td>
+                                                <td class="lF" id="ESOPHAGUS">ESOPHAGUS: &nbsp;{{GITAB2.ESOPHAGUS}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="HEAD">HEAD: &nbsp;{{GITAB2.HEAD}} </td>
+                                                <td class="lF" id="FUNDUS">FUNDUS: &nbsp;{{GITAB2.FUNDUS}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="INSTRUMENT">INSTRUMENT: &nbsp;{{GITAB2.INSTRUMENT}} </td>
+                                                <td class="lF" id="INDICATION">INDICATION: &nbsp;{{GITAB2.INDICATION}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="OROPHARYNX">OROPHARYNX: &nbsp;{{GITAB2.OROPHARYNX}} </td>
+                                                <td class="lF" id="NOTE">NOTE: &nbsp;{{GITAB2.NOTE}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="OTHERS">OTHERS: &nbsp;{{GITAB2.OTHERS}} </td>
+                                                <td class="lF" id="OTHER">OTHER: &nbsp;{{GITAB2.OTHER}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="PYLORUS">PYLORUS: &nbsp;{{GITAB2.PYLORUS}} </td>
+                                                <td class="lF" id="PREMEDICATION">PREMEDICATION: &nbsp;{{GITAB2.PREMEDICATION}} </td>
+                                            </tr>                                           
+                                            <tr>
+                                                <td class="lF" id="QUICK_UREASE">QUICK_UREASE: &nbsp;{{GITAB2.QUICK_UREASE}} </td>
+                                                <td class="lF" id="RECOMMENDATION">RECOMMENDATION: &nbsp;{{GITAB2.RECOMMENDATION}} </td>
+                                            </tr>                                            
+                                            <tr>
+                                                <td class="lF" id="SEC_PART">SEC_PART: &nbsp;{{GITAB2.SEC_PART}} </td>
+                                                <td class="lF" id="SITE_OF_BIOPSY">SITE_OF_BIOPSY: &nbsp;{{GITAB2.SITE_OF_BIOPSY}} </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="THERAPY">THERAPY: &nbsp;{{GITAB2.THERAPY}} </td>
+                                                <td class="lF" id="STOMACH_CARDIA">STOMACH_CARDIA: &nbsp;{{GITAB2.STOMACH_CARDIA}} </td>
+                                            </tr>
+                                            <tr>
+                                                
+                                                <td class="lF" id="WARD">WARD: &nbsp;{{GITAB2.WARD}} </td>
+                                            </tr>*@
+                                           
+                                        </tbody>
+                                    </table>                               
+                                    @*<table ng-repeat="GITABImage in GITAB2.GiendPicList" class="table table-bordered table-striped" id="GIENDO_image">
+                                        <tbody>
+                                            <tr><td>{{GITABImage.Desc}}</td></tr>
+                                            <tr>                                                
+                                                <td><img ng-src="data:image/jpeg;base64,{{GITABImage.PIC}}" id="photo-id" /></td>
+                                               
+                                            </tr>
+                                        </tbody>
+                                    </table>*@
+                                </div>
+
+
+
+                            </div>
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                    <!-- end widget content -->
+
+                </div>
+                <!-- end widget div -->
+
+            </div>
+
+
+
+
+
+    </div>
+</div>
+</div>
+@section FooterTAG{
+ <script src="@Url.Content("~/Assets/js/app/GIENDO/controller.js")"></script>
+ <script src="@Url.Content("~/Assets/js/app/GIENDO/service.js")"></script>
+ @*   <script>
+            bootstrappedProducts = @Html.Raw(Json.Encode(ViewBag.Products));
+      </script>*@
+ }

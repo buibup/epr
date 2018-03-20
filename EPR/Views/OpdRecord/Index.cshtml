@@ -1,0 +1,791 @@
+﻿@{
+    ViewBag.AngularControllerName = "OpdRecordController";
+
+
+    ViewBag.Title = "OPD Assessment View";
+    Layout = "~/Views/Shared/Template.cshtml";
+}
+
+@section HeaderTAG{
+}
+
+@section ContentHaderTAG{
+
+    <h1 class="title">
+        <i class="fa fa-lg fa-fw fa-medkit"></i><span> OPD Assessment View</span>
+    </h1>
+    <span class="ribbon-button-alignment">
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 5px 0px 5px;" ng-click="openWindowPrint($.trim($('#epi-active').text()))">Print</span>
+    </span>
+    <span class="ribbon-button-alignment @*pull-right hidden-print*@">
+
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 0px 0px 0px;" ng-click="openWindowChart()">Growth Chart</span>
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 0px 0px 0px;" ng-click="openWindowSVH()">Document View SVH</span>
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 0px 0px 0px;" ng-click="openWindow()">Document View SNH</span>
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 0px 0px 0px;" ng-click="openWindowPatho()">Patho</span>
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 0px 0px 0px;" ng-click="openWindowGiendo()">GI endo</span>
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 0px 0px 0px;" ng-click="openWindowVaccine()">Vaccine View</span>
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 0px 0px 0px;" ng-click="openWindowSQC()">SEC</span>
+        <span class="label label-sm label-primary" style="cursor:pointer; font-size: 10px;margin: 0px 0px 0px 0px;" ng-click="openWindowCheckUp()">CheckUp</span>
+
+
+
+
+
+        <lable>HN:</lable><input ng-model="patientModel.PAPMI_No" ng-init="patientModel.PAPMI_No='@(ViewBag.Hn)'" ng-keypress="($event.which === 13)?SeachPatient():0" type="text" style="width: 85px; font-size:11px; margin-right:4px; text-align:center;" />
+
+
+
+
+        <button ng-click="SeachPatient()" type="button" class="btn btn-success btn-xs">
+            <i class="fa fa-refresh fa-spin" ng-show="searching"></i>
+            Search
+        </button>
+
+    </span>
+
+
+
+
+}
+
+@section MenuTAG{
+
+    <table class="table table-striped menuTable">
+        <thead>
+            <tr width="50%">
+                <th colspan="2">
+                    <div class="btn-group">
+                        <input type="hidden" ng-model="Temp" name="Temp" ng-init="null">
+                        <input type="hidden" ng-model="TempLocation" name="TempLocation" ng-init="null">
+                        <input type="hidden" ng-model="currentDoctor" name="currentDoctor" ng-init="null">
+                        <input type="hidden" ng-model="currentLocation" name="currentLocation" ng-init="null">
+                    </div>
+                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                        <div class="btn-group" role="group">
+                            <button type="button" class={{StyleBtnDoctor}} ng-click="QuickFilterDoctor()">Doctor</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class={{StyleBtnLocation}} ng-click="QuickFilterLocation()">Location</button>
+                        </div>
+
+                    </div>
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="2" class="smart-form menuFilter">
+                    <div class="input">
+                        <input type="text" ng-model="search_startDate" name="startDate" placeholder="Select a date" class="form-control datepicker" data-dateformat="dd/mm/yy">
+                        <i class="icon-append fa fa-calendar"></i>
+                    </div>
+                    <div class="input">
+                        <input type="text" ng-model="search_endDate" name="endDate" placeholder="Select a date" class="form-control datepicker" data-dateformat="dd/mm/yy">
+                        <i class="icon-append fa fa-calendar"></i>
+                    </div>
+                </th>
+            </tr>
+
+            <tr>
+                @*	<th style="width:15%">Epi Type</th>
+                    <th style="width:15%">Date/Time</th>*@
+            </tr>
+        </thead>
+
+        <tbody style="
+    height: 500px;/* Just for the demo          */
+    width:220px;
+    overflow-y: auto;/* Trigger vertical scroll    */
+    overflow-x: hidden;/* Hide the horizontal scroll */
+    display:-webkit-box;">
+            <tr class="B" ng-repeat-start="epi in patientModel.episodeList | dateRangefilter:search_startDate:search_endDate |docEPIfilter:currentDoctor |docEpifilterLocaion:currentLocation " ng-class="{'opended':$index === LastOpenedRow}" id="epiRow{{$index}}" ng-click="loadEpisodeMedical(epi);activeLastOpenedRow($index);" tabindex="{{$index}}" ng-keydown="keydown($event,$index)">
+                <td style="padding:0px 0px 0px 0px;">{{epi.Episplit}}</td>
+                <td colspan="2" style="padding-left: 5px;" ng-click="loadEpisodeMedical(epi)">{{epi.EpiDateString}} {{epi.admTime}}</td>
+            </tr>
+            <tr ng-show="epi.DoctorChiefComPainList.length > 0" ng-repeat-end ng-show="epi.showPhyList" ng-class="{'opended':$index === LastOpenedRow}" id="epiRow{{$index}}" ng-click="loadEpisodeMedical(epi);activeLastOpenedRow($index);" tabindex="{{$index}}" ng-keydown="keydown($event,$index)">
+                <td></td>
+                <td colspan="2" style="width:250px">
+                    <div ng-repeat="doctor in epi.DoctorChiefComPainList" ng-if="doctor.chiefid<2">{{doctor.chiefComplaintShow}}&nbsp;&nbsp;</div>
+                </td>
+            </tr>
+            <tr ng-hide="patientModel.episodeList.length > 0">
+                <td colspan="3">No episode found.</td>
+            </tr>
+        </tbody>
+    </table>
+
+}
+
+
+<div class="row">
+    <div ng-show="episodeTabList.length > 0" class="col-sm-12">
+
+        <div class="jarviswidget" id="wid-id-7" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false" role="widget" style="">
+            <header role="heading">
+                <div class="jarviswidget-ctrls" rol="menu">
+                    <a ng-click="closeAllEisodeTabMedical()" href="javascript:void(0);" class="button-icon jarviswidget-delete-btn" title="Close all."><i class="fa fa-times"></i></a>
+                </div>
+                <ul class="nav nav-tabs pull-left in">
+
+                    <li ng-repeat="epiRow in episodeTabList" ng-class="{'active':epiRow.active}">
+                        <a data-toggle="tab" href="#epiTab{{$index}}" ng-class="{'opended':epiRow.ERowid === LastOpenedRow}" ng-click="activeLastOpenedRow(epiRow.ERowid)">
+                            <span class="hidden-mobile hidden-tablet" id="EPI-Active">
+                                {{epiRow.EpisodeNo}}
+                                &nbsp;&nbsp;&nbsp;
+                                <i ng-click="MarkEisodeTabMedical(epiRow)" class="fa fa-thumb-tack" ng-class="{'marked': epiRow.marked, 'unmarked': !epiRow.marked}"></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <i ng-click="closeEisodeTabMedical(epiRow)" class="fa fa-times" ng-class="{'fa-spin':!epiRow.loaded}"></i>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+                <span class="jarviswidget-loader"><i class="fa fa-refresh fa-spin"></i></span>
+            </header>
+
+            <!-- widget div-->
+            <div role="content">
+                <!-- widget content -->
+
+                <div class="widget-body">
+                    <div class="tab-content" style="min-height:200px;">
+
+                        <!-- TAB BOX -->
+                        <div ng-repeat="epiRow in episodeTabList" ng-class="{'active':epiRow.active}" class="tab-pane" id="epiTab{{$index}}">
+                            <div ng-show="epiRow.loaded && !epiRow.hasError">
+
+
+
+                                <div style="margin: 0 0 20px 0;" class="hidden-print">
+                                    <span class="label label-md" ng-class="{'label-warning':epiRow.curDoctorCode=='', 'label-success':epiRow.curDoctorCode!=''}" style=" font-size: 13px; cursor:pointer;" ng-click="filterByDoctor(epiRow,'','')">All Doctor</span>
+                                    <span id="doctorList" ng-repeat="doctor in epiRow.DoctorChiefComPainAllList" ng-show="doctor.DoctorCode != null && doctor.DoctorCode !=''   " ng-click="filterByDoctor(epiRow, doctor.DoctorCode, doctor.LocationCode,doctor.DoctorName)" ng-class="{'label-warning':epiRow.curDoctorCode==doctor.DoctorCode  , 'label-success':epiRow.curDoctorCode!=doctor.DoctorCode}" style="cursor:pointer; font-size: 13px;margin: 0px 5px 0px 5px;" class="label label-sm label-success">
+                                        {{doctor.DoctorName}}
+                                    </span>
+                                </div>
+
+                                <div class="table-responsive mw870">
+                                    <table class="table table-bordered table-striped" id="PatientDetail">
+
+                                        <tbody>
+                                            <tr>
+                                                <td class="lF" id="PatientName">Patient Name: &nbsp;  {{epiRow.PAPMIName3}} {{epiRow.PAPMIName}} {{epiRow.PAPMIName2}}</td>
+                                                <td class="lF" id="Gender">Gender: &nbsp; {{epiRow.SexCode}}</td>
+                                                <td class="lF" id="HN">HN: &nbsp;{{epiRow.PAPMINo}} </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td class="lF" id="dob">Date of Birth:&nbsp; {{epiRow.DOBDateString}}</td>
+                                                <td class="lF" id="Age">Age:&nbsp; {{epiRow.EpiAgeYear}} Years {{epiRow.EpiAgeMonth}} Months</td>
+                                                <td class="lF" id="EPI">EN: &nbsp;{{epiRow.EpisodeNo}} &nbsp;&nbsp;  Episode Date/Time: &nbsp;{{epiRow.EpiDateString}} {{epiRow.admTime}}</td>
+
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+                                <div class="table-responsive mw870">
+                                    <div class="table table-bordered table-striped" id="screening">
+                                        <lable class="lF">History of Allergy:</lable>
+                                        <table>
+
+                                            <tbody>
+                                                <tr ng-repeat="cnRow in epiRow.AllergiesModelList">
+                                                    <td style="width:50px;"></td>
+                                                    <td> {{cnRow.ALGDescAll}} </td>
+                                                </tr>
+                                                <tr ng-show="epiRow.AllergiesModelList.length < 1 ">
+                                                    <td style="width:50px;"></td>
+                                                    <td>- </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <lable class="lF" ng-show="epiRow.ObservationAllergyModelList != null && epiRow.ObservationAllergyModelList.length > 0  && epiRow.AgeY <= '15'">Screening of Allergy for this Episode:</lable>
+                                        <table ng-show="epiRow.ObservationAllergyModelList != null && epiRow.ObservationAllergyModelList.length > 0  && epiRow.AgeY <= '15' ">
+
+                                            <tbody>
+                                                <tr ng-repeat="cnRow in epiRow.ObservationAllergyModelList">
+                                                    <td style="width:50px;"></td>
+                                                    <td><lable class="lF"> Drug Allergy: </lable></td>
+                                                    <td id="ScreeningAllerygy">
+
+                                                        <input type="checkbox" ng-model="Drug" ng-true-value="1" ng-false-value="0" ng-checked="{{cnRow.HxDrug}} == 1" disabled="disabled">
+                                                        <label> NKA </label>
+
+                                                        <input type="checkbox" ng-model="Drug" ng-true-value="1" ng-false-value="0" ng-checked="{{cnRow.HxDrugY}} == 1" disabled="disabled">
+                                                        <label> YES </label>
+                                                        <u>
+                                                            &nbsp;
+                                                            {{cnRow.HxOtherDesc}} &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp;
+                                                        </u>
+                                                        &nbsp;  &nbsp;&nbsp;  &nbsp;
+                                                        <lable class="lF">Food Allergy: </lable>
+                                                        <input type="checkbox" ng-model="Food" ng-true-value="1" ng-false-value="0" ng-checked="{{cnRow.HxFood}} == 1" disabled="disabled">
+
+                                                        <label> NKA </label>
+
+                                                        &nbsp;  &nbsp;
+                                                        <input type="checkbox" ng-model="Food" ng-true-value="1" ng-false-value="0" ng-checked="{{cnRow.HxFoodY}} == 1" disabled="disabled">
+
+                                                        <label> YES </label>
+                                                        <u>
+                                                            &nbsp;
+                                                            {{cnRow.HxFoodDesc}} &nbsp;  &nbsp; &nbsp;  &nbsp;&nbsp;  &nbsp;
+                                                        </u>
+                                                        &nbsp;  &nbsp;
+
+                                                        <lable class="lF"> Other: </lable>
+
+                                                        {{cnRow.HxOther}}
+
+
+
+                                                    </td>
+
+
+
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+
+                                        <lable class="lF" ng-show="epiRow.ObservationModelList != null && epiRow.ObservationModelList.length > 0 && epiRow.chkObs=='Y'">Pain Score & FallRisk:</lable>
+                                        <table ng-show="epiRow.ObservationModelList != null && epiRow.ObservationModelList.length > 0 && epiRow.chkObs=='Y'">
+
+                                            <tbody>
+                                                <tr ng-repeat="observRow in epiRow.ObservationModelList" id="PainScore">
+                                                    <td style="width:50px;"></td>
+                                                    <td> Pain Score:  {{observRow.PS}}  &nbsp;&nbsp;&nbsp; Assessed Tool:   {{observRow.AssessTol}}  </td>
+                                                    <td>&nbsp;&nbsp;&nbsp;Location:  {{observRow.PAINLOC}}   &nbsp;&nbsp;&nbsp;  </td>
+                                                    <td>&nbsp;&nbsp;&nbsp; Duration:  {{observRow.Duration}}  &nbsp;&nbsp;&nbsp;Character of Pain:  {{observRow.CHARAC}}  </td>
+
+                                                </tr>
+                                                <tr ng-repeat="observRow in epiRow.ObservationModelList" id="FallRisk">
+                                                    <td style="width:50px;"></td>
+                                                    <td>FallRisk:{{observRow.FallRisk}} &nbsp;&nbsp;&nbsp; Area of Risk : {{observRow.AreaofRisk}}</td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <lable class="lF" ng-show="epiRow.ObservationModelList != null && epiRow.ObservationModelList.length > 0 && epiRow.chkObs=='Y'">Vital Signs:</lable>
+                                        <table ng-show="epiRow.ObservationModelList != null && epiRow.ObservationModelList.length > 0 && epiRow.chkObs=='Y'">
+
+                                            <tbody>
+                                                <tr ng-repeat="observRow in epiRow.ObservationModelList" id="Temperature">
+                                                    <td style="width:50px;"></td>
+                                                    <td>Temp:  {{observRow.Temperature}} &#x2103;  &nbsp;&nbsp;&nbsp; PR:  {{observRow.Pulses}} /min   &nbsp;&nbsp;&nbsp; RR: {{observRow.Respiration}} /min  &nbsp;&nbsp;&nbsp; BP:  {{observRow.BPSystolic}}/{{observRow.BPDiastolic}} &nbsp; mm/Hg  &nbsp;&nbsp;&nbsp; O2Sat: {{observRow.OxygenSaturation}} % &nbsp;&nbsp;&nbsp;  BW: {{observRow.weight}}  kgs &nbsp;&nbsp;&nbsp; Ht: {{observRow.height}} cms. &nbsp;&nbsp;&nbsp; BMI: {{observRow.BMI}}   <div ng-show="epiRow.AgeY <= '15'">&nbsp;&nbsp; HC:{{observRow.Head}}  cm  &nbsp;&nbsp; CC:{{observRow.chest}}</div> </td>
+
+
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <lable class="lF" ng-show="epiRow.ObservationModelList != null && epiRow.ObservationModelList.length > 0 && epiRow.chkObs=='Y'">Triage Level:</lable>
+                                        <table ng-show="epiRow.ObservationModelList != null && epiRow.ObservationModelList.length > 0 && epiRow.chkObs=='Y'">
+
+                                            <tbody>
+                                                <tr ng-repeat="observRow in epiRow.ObservationModelList" id="Triage">
+                                                    <td style="width:50px;"></td>
+                                                    <td>Triage Level:  {{observRow.Triage}} </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+
+
+
+
+
+
+
+                                    </div>
+
+
+
+
+
+                                    @*  //------------------------------------------------------------*@
+
+
+
+                                    <div class="table table-bordered table-striped">
+
+
+                                        <div ng-repeat="cnRowDr in epiRow.LocationListNew | filter:query | orderBy: 'RowNumber' " id="Location">
+
+                                            <h7 class="headerConLocation" ng-show="cnRowMaster.LocationCode!=''"> {{cnRowDr.LocationDesc}} &nbsp;({{cnRowDr.LocationCode}}) </h7>
+
+
+
+
+                                            @*<table ng-show="epiRow.DoctorChiefComPainNurseListNew.length > 0">
+
+                                                    <tbody id="ChiefComPaintNurse">
+                                                        <tr>  <td style="width:50px;"></td><td>  <lable class="lF" ng-show="epiRow.DoctorChiefComPainNurseListNew.length > 0  ">Chief Complaint for Nurse:</lable></td></tr>
+                                                        <tr ng-repeat="cnRowNurse in epiRow.DoctorChiefComPainNurseListNew " ng-if="cnRowDr.LocationCode== cnRowNurse.LocationCode">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="white-space: pre-line;padding-left:20px">{{cnRowNurse.chiefComplaint|beginLine}} </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>*@
+                                            <table ng-show="(epiRow.ClinicalNotesModelList.length > 0)">
+
+                                                <tbody id="ChiefComPaintNurse">
+                                                    <tr>  <td style="width:50px;"></td><td>  <lable class="lF" ng-show="epiRow.ClinicalNotesModelList.length > 0  ">Chief Complaint for Nurse:</lable></td></tr>
+                                                    <tr ng-repeat="cnRowNurse in epiRow.ClinicalNotesModelList " ng-if="(cnRowDr.LocationDesc== cnRowNurse.NOTEnterLocDesc)&&(cnRowNurse.NOTClinNoteTypeCode=='CCN')">
+                                                        <td style="width:50px;"></td>
+                                                        <td style="white-space: pre-line;padding-left:20px">{{cnRowNurse.NotesHtmlPlainText|beginLine}} </td>
+
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+
+
+
+                                            <div ng-repeat="cnRowMaster in epiRow.DoctorNameModelListLNew " id="DoctorNameModelListLNew">
+
+                                                <h7 class="headerConDR" ng-show="cnRowMaster.LocationCode== cnRowDr.LocationCode"> &nbsp;  &nbsp;  &nbsp;{{cnRowMaster.DoctorDesc}}   </h7>
+                                                <table ng-show="(cnRowMaster.LocationCode==cnRowDr.LocationCode)">
+                                                    <tbody id="ChiefComplaint">
+                                                        <tr>  <td style="width:50px;" valign="middle"></td><td>  <lable class="lF" ng-show=" cnRowMaster.LocationCode==cnRowDr.LocationCode"><br />Chief Complaint :</lable></td></tr>
+                                                        <tr ng-repeat="cnRow in epiRow.ClinicalNotesModelList2" ng-if="cnRow.NOTClinNoteTypeDesc=='Chief Complaint'  &&  cnRowMaster.DoctorCode==cnRow.notNurseIdCode   && cnRowMaster.LocationCode==cnRowDr.LocationCode">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="white-space: pre-line;padding-left:20px">{{cnRow.NotesHtmlPlainText|beginLine}}</td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+
+                                                <table ng-show="cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                    <tbody id="PresentIllness">
+                                                        <tr>  <td style="width:50px;"></td><td>  <lable class="lF" ng-show=" cnRowMaster.LocationCode==cnRowDr.LocationCode ">Present Illness :</lable></td></tr>
+                                                        <tr ng-repeat="cnRow in epiRow.ClinicalNotesModelList2" ng-if="cnRow.NOTClinNoteTypeCode=='PN'  &&  cnRowMaster.DoctorCode==cnRow.notNurseIdCode && cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="white-space: pre-line;padding-left:20px">{{cnRow.NotesHtmlPlainText|beginLine}}</td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+
+
+                                                <table ng-show=" cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                    <tbody id="PhysicalExam">
+                                                        <tr>  <td style="width:50px;"></td><td>  <lable class="lF" ng-show="cnRowMaster.LocationCode==cnRowDr.LocationCode ">Physical Exam:</lable></td></tr>
+                                                        <tr ng-repeat="pheRow in epiRow.PhyExamModelList2" ng-if="cnRowMaster.DoctorCode==pheRow.DoctorCode   && cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="padding-left:20px;" ng-if="pheRow.Q1Text!=''">
+
+                                                                <p style="white-space: pre-line;">{{pheRow.Q1Text.replace('-','');}}</p>
+
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+
+                                                <table ng-show=" cnRowMaster.LocationCode==cnRowDr.LocationCode">
+                                                    <tbody id="Diagnosis">
+                                                        <tr ng-show=" cnRowMaster.LocationCode==cnRowDr.LocationCode">  <td style="width:50px;"></td><td>  <lable class="lF">Diagnosis:</lable></td></tr>
+                                                        <tr ng-repeat="diagRow in epiRow.DiagnosisModelListNew " ng-if="cnRowMaster.DoctorCode==diagRow.ICD10DocCode && cnRowMaster.LocationCode==cnRowDr.LocationCode  ">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="white-space: pre-line;padding-left:20px">{{diagRow.ICD10}}</td>
+                                                            <td>&nbsp;&nbsp;{{diagRow.ICD10Desc}}</td>
+                                                            <td>&nbsp;&nbsp;({{diagRow.icd10TypDesc}})</td>
+                                                            <td ng-show="diagRow.MRDIADesc !=''">&nbsp;&nbsp;|&nbsp;&nbsp;{{diagRow.MRDIADesc}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+
+
+                                                <table ng-show="cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                    <tbody id="PlanofTreatment">
+                                                        <tr>  <td style="width:50px;"></td><td>  <lable class="lF" ng-show=" cnRowMaster.LocationCode==cnRowDr.LocationCode ">Plan of Treatment:</lable></td></tr>
+                                                        <tr ng-repeat="cnRow in epiRow.ClinicalNotesModelList2" ng-if="cnRow.NOTClinNoteTypeCode=='PL' &&  cnRowMaster.DoctorCode==cnRow.notNurseIdCode  && cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="white-space: pre-line;padding-left:20px">{{cnRow.NotesHtmlPlainText|beginLine}} </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                                <table ng-show="cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                    <tbody id="NoteToNurse">
+                                                        <tr>  <td style="width:50px;"></td><td>  <lable class="lF" ng-show=" cnRowMaster.LocationCode==cnRowDr.LocationCode ">Note To Nurse:</lable></td></tr>
+                                                        <tr ng-repeat="cnRow in epiRow.ClinicalNotesModelList2" ng-if="cnRow.NOTClinNoteTypeCode=='NN' &&  cnRowMaster.DoctorCode==cnRow.notNurseIdCode  && cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="white-space: pre-line;padding-left:20px">{{cnRow.NotesHtmlPlainText|beginLine}} </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                                <table ng-show=" cnRowMaster.LocationCode==cnRowDr.LocationCode">
+                                                    <tbody id="Medication">
+                                                        <tr ng-show="cnRowMaster.LocationCode==cnRowDr.LocationCode">  <td style="width:50px;"></td><td>  <lable class="lF">Medication:</lable></td></tr>
+                                                        <tr ng-repeat="cnRow3 in epiRow.MedicalModelListNew  | filter:query | orderBy: 'ARCIM_DESC'" ng-if="cnRowMaster.DoctorCode==cnRow3.CTPCP_Code2  && cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="white-space: pre-line;padding-left:20px">{{cnRow3.ARCIM_DESC}} </td>
+                                                            <td>&nbsp;&nbsp;{{cnRow3.ORI_PhQtyOrd2}}</td>
+                                                            <td>&nbsp;&nbsp;&nbsp;{{cnRow3.Dose}}</td>
+                                                            <td><font color="red">&nbsp;&nbsp;&nbsp;{{cnRow3.OEORIDepProcNotes}}</font></td>
+
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+
+
+                                                <table ng-show="cnRowMaster.LocationCode==cnRowDr.LocationCode ">
+
+                                                    <tbody id="NonProceduresTreatment">
+                                                        <tr>  <td style="width:50px;"></td><td>  <lable class="lF" ng-show="cnRowMaster.LocationCode==cnRowDr.LocationCode ">Clinical Notes : Non-Procedures Treatment:</lable></td></tr>
+                                                        <tr ng-repeat="cnRow in epiRow.ClinicalNotesModelList2" ng-if="cnRow.NOTClinNoteTypeCode=='TM' &&  cnRowMaster.DoctorCode==cnRow.notNurseIdCode  && cnRowMaster.LocationCode==cnRowDr.LocationCode">
+                                                            <td style="width:50px;"></td>
+                                                            <td style="white-space: pre-line;padding-left:20px">{{cnRow.NotesHtmlPlainText|beginLine}} </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+
+
+
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+
+
+
+
+                                    @*------------------------------------------------------------------------Not Doctor---------------------------------------------*@
+
+
+
+                                    <div class="table table-bordered table-striped">
+
+                                        @* -------------------group by Doctor*@
+
+                                        <div ng-show="epiRow.NotDoctorListNew != null && epiRow.NotDoctorListNew.length > 0 ">
+
+                                            <div ng-repeat="cnRowMaster in epiRow.NotDoctorListNew ">
+
+                                                <h7 class="headerCon" ng-show="cnRowMaster.LocationCode!=''   ">  {{cnRowMaster.LocationDesc}} &nbsp; ({{cnRowMaster.LocationCode}})</h7>
+
+                                                </br> <h7 class="headerCon" ng-show="cnRowMaster.LocationCode!=''">&nbsp; &nbsp;{{cnRowMaster.DoctorDesc}}  </h7>
+
+
+
+                                                <table ng-show="epiRow.DiagnosisModelOtherListNew != null && epiRow.DiagnosisModelOtherListNew.length > 0 ">
+
+                                                    <tbody id="ICD10DocCode">
+
+                                                        <tr ng-show="epiRow.DiagnosisModelOtherListNew != null && epiRow.DiagnosisModelOtherListNew.length > 0  ">  <td style="width:50px;"></td><td>  <lable class="lF">Diagnosis:</lable></td></tr>
+
+                                                        <tr ng-repeat="diagRow in epiRow.DiagnosisModelOtherListNew " ng-if="cnRowMaster.DoctorCode==diagRow.ICD10DocCode  ">
+                                                            <td style="width:50px;"></td>
+                                                            <td class="c">&nbsp;&nbsp;{{diagRow.ICD10}}</td>
+                                                            <td>&nbsp;&nbsp;{{diagRow.ICD10Desc}}</td>
+                                                            <td>&nbsp;&nbsp;({{diagRow.icd10TypDesc}})</td>
+                                                            <td ng-show="diagRow.MRDIADesc !=''">&nbsp;&nbsp;|&nbsp;&nbsp;{{diagRow.MRDIADesc}}</td>
+
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                                <table>
+                                                    <tbody id="ARCIM_DESC">
+                                                        <tr ng-show="epiRow.MedicalModelOtherListNew != null && epiRow.MedicalModelOtherListNew.length  > 0">  <td style="width:50px;"></td><td>  <lable class="lF">Medication:</lable></td></tr>
+                                                        <tr ng-repeat="cnRow3 in epiRow.MedicalModelOtherListNew  | filter:query | orderBy: 'ARCIM_DESC'" ng-if="cnRowMaster.DoctorCode==cnRow3.CTPCP_Code2 ">
+
+                                                            <td style="width:50px;"></td>
+                                                            <td>&nbsp;&nbsp;{{cnRow3.ARCIM_DESC}} </td>
+                                                            <td>&nbsp;&nbsp;{{cnRow3.ORI_PhQtyOrd2}}</td>
+                                                            <td>&nbsp;&nbsp;&nbsp;{{cnRow3.Dose}}</td>
+
+                                                        </tr>
+
+
+                                                    </tbody>
+                                                </table>
+
+
+
+                                                <p>&nbsp;&nbsp;</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                @* -----------------End Group Doctor-----------------*@
+
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel-group" style="position:absolute;top:-4px;right:-10px;max-width:200px;min-width:200px;">
+                                    <button style="width:200px;" data-toggle="collapse" data-target="#DocScan" type="button" class="btn btn-primary">DocScan  <span class="badge">{{(DocScan|filterepi:this).length}}</span></button>
+                                    <div id="DocScan" class="collapse{{(widthSC !== 1024)&&(widthSC >= 1280) ?'in':''}} alert-success" style="max-width:200px;min-width:200px;">
+                                        <div ng-repeat="DCL in DocScan|filterepi:this" stype="max-width:200px">
+                                            <li style="overflow:hidden;white-space:nowrap;max-width:180px;">                                               
+                                                <a href="http://10.105.11.21/SNHDocview/documentview.aspx?hn={{DCL.hn}}&en={{DCL.episode}}&item={{DCL.itemno}}&p={{DCL.itemno}}_{{DCL.itemno}}&u={{DCL.u}}&d={{DCL.d}}" target="_blank" title="{{DCL.docname}} | {{DCL.doctorName}}">{{DCL.docname}}</a>                                               
+                                            </li>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <button style="width:200px;margin-top: 5px;" data-toggle="collapse" data-target="#QuippeScan" type="button" class="btn btn-success">Quippe  <span class="badge">{{(QuippeScan|filterQuippe:this).length}}</span></button>
+                                    <div id="QuippeScan" class="collapse{{(widthSC !== 1024)&&(widthSC >= 1280) ?'in':''}} alert-success" style="max-width:200px;min-width:200px;">
+                                        <div ng-repeat="QPL in QuippeScan|filterQuippe:this" stype="max-width:200px">
+                                           
+                                            <li>
+                                                <a data-ng-href="@Url.Action("QuippeNoteView", "opdrecord")/?p={{QPL.HN}}&e={{QPL.id}}" target="_blank">{{ QPL.TemplateName}} </a>
+                                            </li>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- TAB BOX -->
+
+                                <div class="table table-bordered table-striped mw870">
+
+                                    <table>
+                                        <tbody id="Radiology">
+                                            <tr>  <td colspan="4">  <lable class="lF">Radiology :</lable></td></tr>
+                                            <tr ng-repeat="Radio in epiRow.RadiologyResultsModelList | orderBy: 'SttDate'">
+                                                <td style="width:50px;"></td>
+
+                                                <td>&nbsp;&nbsp;&nbsp;{{Radio.HtmlPlanText}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table>
+                                        <tbody id="LabResult">
+                                            <tr> <td colspan="4">  <lable class="lF">LabResult :</lable></td></tr>
+                                            <tr ng-repeat="cnLab in epiRow.LaboratoryResultsModelList">
+                                                <td style=" width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{cnLab.tcname}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{cnLab.data}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{cnLab.unit}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <lable class="lF">Nursing Intervention : </lable>
+                                    <table border="0" ng-repeat="NI in epiRow.NursingInterventionList">
+                                        <tbody id="NursingIntervention">
+
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q01Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q21BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q31PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q41RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q51BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q61BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q71O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q81OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q91Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q101User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.QmedOrdSet}}</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q02Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q22BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q32PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q42RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q52BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q62BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q72O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q82OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q92Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q102User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Qmed2OrdSet}}</td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q03Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q23BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q33PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q43RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q53BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q63BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q73O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q83OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q93Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q103User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Qmed3OrdSet}}</td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q04Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q24BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q34PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q44RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q54BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q64BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q74O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q84OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q94Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q104User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Qmed4OrdSet}}</td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q05Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q25BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q35PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q45RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q55BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q65BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q75O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q85OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q95Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q105User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Qmed5OrdSet}}</td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q06Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q26BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q36PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q46RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q56BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q66BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q76O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q86OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q96Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q106User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Qmed6OrdSet}}</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q07Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q27BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q37PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q47RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q57BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q67BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q77O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q87OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q97Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q107User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Qmed7OrdSet}}</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q08Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q28BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q38PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q48RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q58BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q68BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q78O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q88OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q98Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q108User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Qmed8OrdSet}}</td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td style="width:50px;"></td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q09Time}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q29BT}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q39PR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q49RR}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q59BP1}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q69BP2}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q79O2Sat}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q89OrdItm}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q99Outcome}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Q109User}}</td>
+                                                <td>&nbsp;&nbsp;&nbsp;{{NI.Qmed9OrdSet}}</td>
+
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+
+
+
+                                </div>
+
+
+                            </div>
+
+
+
+
+
+
+
+                        </div>
+                    </div>
+                    <!-- end widget content -->
+
+                </div>
+                <!-- end widget div -->
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+    @section FooterTAG{
+        <script src="@Url.Content("~/Assets/js/app/OpdRecord/controller.js")"></script>
+        <script src="@Url.Content("~/Assets/js/app/OpdRecord/service.js")"></script>
+
+        @* <script>
+                  bootstrappedProducts = @Html.Raw(Json.Encode(ViewBag.Products));
+            </script>*@
+
+    }
+
+</div>
